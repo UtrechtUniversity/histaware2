@@ -64,7 +64,7 @@ def train_tfidf(docs):
     return tfidf_transformer,cv
 
 
-def apply_tfidf(tfidf_transformer,cv,docs_test):
+def apply_tfidf(tfidf_transformer,cv,docs_test,most_commo_keywords):
     # you only needs to do this once, this is a mapping of index to
     feature_names = cv.get_feature_names()
 
@@ -73,33 +73,33 @@ def apply_tfidf(tfidf_transformer,cv,docs_test):
     # generate tf-idf for the given document
     tf_idf_vector = tfidf_transformer.transform(cv.transform(docs_test))
 
-#######
-    # tf_idf_vector_a = tf_idf_vector.A
-    # idx_lst=[]
-    # for itm in tf_idf_vector_a:
-    #     idx_lst+=list(itm.argsort()[-10:])
-    #
-    # data = Counter(idx_lst)
-    # idx_common = [it[0] for it in data.most_common(10)]
-    # keywords = [feature_names[idx] for idx in idx_common ]
-    # print(keywords)
-    # return keywords
+    if most_commo_keywords:
+        ####### select the most common keywords of all documents
+        tf_idf_vector_a = tf_idf_vector.A
+        idx_lst = []
+        for itm in tf_idf_vector_a:
+            idx_lst += list(itm.argsort()[-20:])
 
+        data = Counter(idx_lst)
+        idx_common = [it[0] for it in data.most_common(20)]
+        keywords = [feature_names[idx] for idx in idx_common]
+        #print(keywords)
+        return keywords
+    else:
 ########
-
-
+        # select topest tfidf scores in the corpus.
         # # sort the tf-idf vectors by descending order of scores
-    sorted_items = sort_coo(tf_idf_vector.tocoo())
-    # extract only the top n; n here is 10
-    keywords = extract_topn_from_vector(feature_names, sorted_items, 10)
-    # now print the results
-    # print("\n=====Doc=====")
-    # print(doc)
-    print("\n===Keywords===")
-    # for k in keywords:
-    #     print(k, keywords[k])
+        sorted_items = sort_coo(tf_idf_vector.tocoo())
+        # extract only the top n; n here is 10
+        keywords = extract_topn_from_vector(feature_names, sorted_items, 20)
+        # now print the results
+        # print("\n=====Doc=====")
+        # print(doc)
+        #print("\n===Keywords===")
+        # for k in keywords:
+        #     print(k, keywords[k])
 
-    keywords_lst = list(keywords.keys())
-    return keywords_lst
+        keywords_lst = list(keywords.keys())
+        return keywords_lst
 
 ##############

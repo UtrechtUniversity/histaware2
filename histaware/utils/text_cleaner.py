@@ -6,10 +6,13 @@ import nltk
 
 
 class TextCleaner:
+    STOP_WORDS_Extra = ['dc', 'pct','ln','we','wij','nf','jullie','dir','miljoen',
+                        'ton','miljard','per']
+
     def __init__(self):
-        #self.d = enchant.Dict("nl_NL")
+        # self.d = enchant.Dict("nl_NL")
         self.stopword_list = nltk.corpus.stopwords.words("dutch")
-        self.STOPWORDS = set(self.stopword_list)
+        self.STOPWORDS = set(self.stopword_list+ self.STOP_WORDS_Extra)
 
     def get_stopwords(self):
         return self.STOPWORDS
