@@ -206,7 +206,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, required=True, help='path to csv files')
-    parser.add_argument('--embedding_dir', type=str, required=True, help='path to test csv files')
+    parser.add_argument('--embedding_dir', type=str, required=True, help='path to embedding directory')
     parser.add_argument('--model_dir', type=str, required=True, help='path to test csv files')
     args = parser.parse_args()
 
@@ -222,41 +222,41 @@ if __name__ == '__main__':
     train_inputs, val_inputs, train_labels, val_labels = train_test_split(
         encoded_texts, df['labels'], test_size=0.1, random_state=42)
 
-    print(train_inputs)
-    print(type(val_inputs))
-    print(type(train_labels))
-    print(type(val_labels))
-
-    s = CNN2_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
-                   args.channel_first)
-    print(" X_train.shpe", X_train.shape)
-    print(" y_train.shpe", y_train.shape)
-    print(" X_test.shpe", X_test.shape)
-    print(" y_test.shpe", y_test.shape)
-
-    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir)
-    s.save_results(y_test, args.output_dir)  # , cv_results)
+    # print(train_inputs)
+    # print(type(val_inputs))
+    # print(type(train_labels))
+    # print(type(val_labels))
+    #
+    # s = CNN2_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
+    #                args.channel_first)
+    # print(" X_train.shpe", X_train.shape)
+    # print(" y_train.shpe", y_train.shape)
+    # print(" X_test.shpe", X_test.shape)
+    # print(" y_test.shpe", y_test.shape)
+    #
+    # s.apply_model(X_train, y_train, X_test, y_test, args.output_dir)
+    # s.save_results(y_test, args.output_dir)  # , cv_results)
 
     ###### cnn pytorch
-    # # Load data to PyTorch DataLoader
-    # train_dataloader, val_dataloader = data_loader(train_inputs, val_inputs, train_labels, val_labels, batch_size=50)
+    # Load data to PyTorch DataLoader
+    train_dataloader, val_dataloader = data_loader(train_inputs, val_inputs, train_labels, val_labels, batch_size=50)
+
+    #embedding_dir = '../weights/cbow_histaware_63/'
+    embeddings = load_pretrained_vectors(embedding_dir,vocab)
     #
-    # #embedding_dir = '../weights/cbow_histaware_63/'
-    # embeddings = load_pretrained_vectors(embedding_dir,vocab)
-    # #
-    #
-    # loss_fn = nn.CrossEntropyLoss()
-    #
-    # set_seed(42)
-    # cnn_non_static, optimizer = initilize_model(pretrained_embedding=embeddings, #vocab_size=len(vocab), embed_dim=300,
-    #                                       freeze_embedding=False,
-    #                                       learning_rate=0.25,
-    #                                       dropout=0.5)
-    #
-    # train(cnn_non_static, optimizer, train_dataloader, val_dataloader, epochs=2)
-    #
-    # save_model(cnn_non_static, model_dir)
-    # save_vocab(vocab, model_dir)
+
+    loss_fn = nn.CrossEntropyLoss()
+
+    set_seed(42)
+    cnn_non_static, optimizer = initilize_model(pretrained_embedding=embeddings, #vocab_size=len(vocab), embed_dim=300,
+                                          freeze_embedding=False,
+                                          learning_rate=0.25,
+                                          dropout=0.5)
+
+    train(cnn_non_static, optimizer, train_dataloader, val_dataloader, epochs=2)
+
+    save_model(cnn_non_static, model_dir)
+    save_vocab(vocab, model_dir)
     ############ cnn pytorch
 
 
